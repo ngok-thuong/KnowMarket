@@ -1,17 +1,29 @@
 # Backend (API)
 
-## Purpose
-- Golang API service: feed, post detail, profiles, auth (wallet signature), optional WebSocket.
-- Reads/writes Postgres.
-- Does **not** index chain directly (that belongs to `event/`).
+Golang API: profiles, auth (SIWE), feed/detail (reads Postgres). Does **not** index chain (see `event/`).
 
-## Suggested structure
-- `cmd/`: main entrypoints
-- `internal/`: **DDD modules** (bounded contexts)
-- `api/`: (optional) legacy place for handlers; prefer `internal/interfaces/http/`
-- `migrations/`: DB migrations
-- `configs/`: config templates
+## Layout (DDD)
 
-## DDD layout
-See `backend/docs/ddd-structure.md`.
+```
+internal/
+  shared/                    # cross-cutting
+    config/                  # env → Config
+    db/                      # Postgres pool
+  identity/                  # bounded context: wallet auth, sessions, users
+    domain/                  # aggregates / value objects (no SQL/HTTP)
+    application/             # use cases (e.g. SIWE verify)
+    infrastructure/
+      persistence/           # Postgres repository implementations (next)
+    interfaces/
+      http/                  # HTTP handlers (next)
+cmd/api/                     # entrypoint (when added)
+migrations/                  # SQL migrations
+docs/
+  ddd-structure.md           # full DDD conventions
+```
 
+See `docs/ddd-structure.md` for dependency rules and bounded contexts.
+
+## Commands
+
+- `make migrate-auth-up` / `make migrate-auth-down` — from `backend/` (needs Docker Postgres).

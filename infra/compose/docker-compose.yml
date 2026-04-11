@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: knowmarket-postgres
+    environment:
+      POSTGRES_USER: knowmarket
+      POSTGRES_PASSWORD: knowmarket
+      POSTGRES_DB: knowmarket
+    # Host 5432 is often taken by a local Postgres install — map to 5433 on the host.
+    ports:
+      - "5433:5432"
+    volumes:
+      - knowmarket_pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U knowmarket -d knowmarket"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  knowmarket_pgdata:
