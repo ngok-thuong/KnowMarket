@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none" role="img" aria-label="KnowMarket">
+  <rect width="40" height="40" rx="10" fill="#0a0c10"/>
+  <path
+    d="M12 9v22M12 20l14-9M12 20l14 9"
+    stroke="#7c3aed"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <circle cx="28" cy="11" r="3" fill="#c4b5fd" opacity="0.95"/>
+</svg>
