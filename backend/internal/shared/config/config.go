@@ -11,15 +11,16 @@ import (
 
 // Config holds runtime settings loaded from the environment.
 type Config struct {
-	HTTPAddr      string
-	DatabaseURL   string
-	JWTSecret     string
-	NonceTTL      time.Duration
-	JWTTTL        time.Duration
-	SIWEDomain    string
-	SIWEURI       string
-	SIWEChainID   int
-	SIWEStatement string
+	HTTPAddr           string
+	DatabaseURL        string
+	JWTSecret          string
+	NonceTTL           time.Duration
+	JWTTTL             time.Duration
+	SIWEDomain         string
+	SIWEURI            string
+	SIWEChainID        int
+	SIWEStatement      string
+	CORSAllowedOrigins []string
 }
 
 // Load reads required env vars and applies defaults for optional ones.
@@ -74,15 +75,36 @@ func Load() (*Config, error) {
 	}
 	statement := strings.TrimSpace(os.Getenv("SIWE_STATEMENT"))
 
+	corsOrigins := parseCSVEnv("CORS_ALLOWED_ORIGINS")
+	if len(corsOrigins) == 0 {
+		corsOrigins = []string{siweURI}
+	}
+
 	return &Config{
-		HTTPAddr:      addr,
-		DatabaseURL:   dbURL,
-		JWTSecret:     secret,
-		NonceTTL:      time.Duration(nonceMin) * time.Minute,
-		JWTTTL:        time.Duration(jwtDays) * 24 * time.Hour,
-		SIWEDomain:    siweDomain,
-		SIWEURI:       siweURI,
-		SIWEChainID:   chainID,
-		SIWEStatement: statement,
+		HTTPAddr:           addr,
+		DatabaseURL:        dbURL,
+		JWTSecret:          secret,
+		NonceTTL:           time.Duration(nonceMin) * time.Minute,
+		JWTTTL:             time.Duration(jwtDays) * 24 * time.Hour,
+		SIWEDomain:         siweDomain,
+		SIWEURI:            siweURI,
+		SIWEChainID:        chainID,
+		SIWEStatement:     statement,
+		CORSAllowedOrigins: corsOrigins,
 	}, nil
+}
+
+func parseCSVEnv(key string) []string {
+	raw := strings.TrimSpace(os.Getenv(key))
+	if raw == "" {
+		return nil
+	}
+	var out []string
+	for _, p := range strings.Split(raw, ",") {
+		p = strings.TrimSpace(p)
+		if p != "" {
+			out = append(out, p)
+		}
+	}
+	return out
 }

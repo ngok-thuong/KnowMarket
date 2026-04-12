@@ -1,0 +1,4 @@
+# Local secrets (templates use .env.example)
+.env
+.env.*
+!.env.example
