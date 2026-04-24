@@ -21,5 +21,13 @@ build/
 .turbo/
 .cache/
 
+# Hardhat / Solidity artifacts
+blockchain/artifacts/
+blockchain/cache/
+blockchain/coverage/
+blockchain/coverage.json
+blockchain/typechain-types/
+blockchain/gas-report.txt
+
 # OS/editor
 .DS_Store
