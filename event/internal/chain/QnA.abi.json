@@ -1,0 +1,51 @@
+[
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "uint256", "name": "questionId",   "type": "uint256" },
+      { "indexed": true,  "internalType": "address", "name": "asker",        "type": "address" },
+      { "indexed": true,  "internalType": "address", "name": "bountyToken",  "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "bountyAmount", "type": "uint256" },
+      { "indexed": false, "internalType": "string",  "name": "questionCid",  "type": "string"  },
+      { "indexed": false, "internalType": "uint64",  "name": "deadline",     "type": "uint64"  }
+    ],
+    "name": "QuestionCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "uint256", "name": "questionId", "type": "uint256" },
+      { "indexed": true,  "internalType": "uint256", "name": "answerId",   "type": "uint256" },
+      { "indexed": true,  "internalType": "address", "name": "answerer",   "type": "address" },
+      { "indexed": false, "internalType": "string",  "name": "answerCid",  "type": "string"  }
+    ],
+    "name": "AnswerSubmitted",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "uint256", "name": "questionId", "type": "uint256" },
+      { "indexed": true,  "internalType": "uint256", "name": "answerId",   "type": "uint256" },
+      { "indexed": true,  "internalType": "address", "name": "voter",      "type": "address" },
+      { "indexed": false, "internalType": "int8",    "name": "direction",  "type": "int8"    },
+      { "indexed": false, "internalType": "uint32",  "name": "weight",     "type": "uint32"  }
+    ],
+    "name": "VoteCast",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      { "indexed": true,  "internalType": "uint256", "name": "questionId",     "type": "uint256" },
+      { "indexed": false, "internalType": "uint256", "name": "winnerAnswerId", "type": "uint256" },
+      { "indexed": false, "internalType": "address", "name": "winner",         "type": "address" },
+      { "indexed": false, "internalType": "address", "name": "payoutToken",    "type": "address" },
+      { "indexed": false, "internalType": "uint256", "name": "payoutAmount",   "type": "uint256" },
+      { "indexed": false, "internalType": "uint8",   "name": "resolution",    "type": "uint8"   }
+    ],
+    "name": "QuestionResolved",
+    "type": "event"
+  }
+]
