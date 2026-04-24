@@ -90,6 +90,26 @@ func (h *AuthHandler) PostVerify(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"authentication failed"}`, st)
 		return
 	}
+
+	// Issue JWT as an httpOnly cookie so it is not readable by JS. This also
+	// enables session continuity via fetch(..., { credentials: "include" }).
+	//
+	// For local dev on http://localhost, we keep Secure=false + SameSite=Lax.
+	// In production (HTTPS), Secure should be true (r.TLS != nil behind a proxy
+	// should be handled at the edge / ingress).
+	cookieSecure := r.TLS != nil
+	cookieSameSite := http.SameSiteLaxMode
+	http.SetCookie(w, &http.Cookie{
+		Name:     "km_access_token",
+		Value:    res.AccessToken,
+		Path:     "/",
+		Expires:  res.ExpiresAt,
+		MaxAge:   int(time.Until(res.ExpiresAt).Seconds()),
+		HttpOnly: true,
+		Secure:   cookieSecure,
+		SameSite: cookieSameSite,
+	})
+
 	w.Header().Set("Content-Type", "application/json")
 	_ = json.NewEncoder(w).Encode(verifyResp{
 		AccessToken: res.AccessToken,
@@ -124,5 +144,14 @@ func (h *AuthHandler) PostLogout(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, `{"error":"server error"}`, http.StatusInternalServerError)
 		return
 	}
+	// Clear cookie client-side regardless of server-side session state.
+	http.SetCookie(w, &http.Cookie{
+		Name:     "km_access_token",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		HttpOnly: true,
+		SameSite: http.SameSiteLaxMode,
+	})
 	w.WriteHeader(http.StatusNoContent)
 }

@@ -2,3 +2,24 @@
 .env
 .env.*
 !.env.example
+/node_modules
+
+# Node / Next.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.pnp.*
+
+.next/
+out/
+dist/
+build/
+
+# Caches
+.turbo/
+.cache/
+
+# OS/editor
+.DS_Store

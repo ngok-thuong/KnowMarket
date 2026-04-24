@@ -1,21 +1,28 @@
-# Blockchain (Cosmos SDK - Go)
+# Blockchain (EVM / Solidity)
 
 ## Purpose
-- Cosmos chain module(s) for:
-  - Posts (create/edit revisions)
-  - Access purchase (paywall)
-  - Contributions submit/accept
-  - Revenue split / withdrawals (or escrow-like accounting)
-- Emits events that `event/` service indexes into Postgres.
+- Solidity smart contracts on EVM (target: Base/Arbitrum) for:
+  - Bounty Q&A (ask/answer/vote/resolve/claim/refund)
+  - Posts (premium paywall / access purchase)
+  - Contributions (submit/accept + revenue split + withdrawals)
+- Emits events that the `event/` indexer writes into Postgres.
 
-## Suggested structure
-- `app/`: Cosmos app wiring
-- `cmd/`: binaries (node, cli)
-- `proto/`: protobuf definitions
-- `modules/`: custom modules (x/posts, x/access, x/contrib, x/revenue)
-- `scripts/`: localnet scripts
-- `docs/`: module specs, event list
+## Structure
+- `contracts/`: Solidity contracts
+- `script/` or `scripts/`: deploy scripts (tool-dependent)
+- `test/`: contract tests (tool-dependent)
 
 ## Event contract
-Keep event schema consistent with `docs/spec/events.md` (adapted to Cosmos event format).
+Keep event schema consistent with `docs/spec/events.md`.
+
+## Local development
+The repo is tool-agnostic; use either Foundry or Hardhat.
+
+Foundry example:
+
+```bash
+cd blockchain
+forge build
+forge test
+```
 

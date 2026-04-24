@@ -1,5 +1,5 @@
-import { HomeJourney } from "@/components/home/home-journey";
+import { HomePageClient } from "@/components/home/homepage";
 
 export default function HomePage() {
-  return <HomeJourney />;
+  return <HomePageClient />;
 }

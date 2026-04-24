@@ -8,6 +8,13 @@
 
 body {
   @apply bg-ink text-paper antialiased;
+  /* Canvas network renders behind body — keep bg slightly transparent on homepage */
+}
+
+/* Homepage overlay: let blockchain canvas bleed through section backgrounds */
+.km-section-overlay {
+  background: rgba(10, 12, 16, 0.72);
+  backdrop-filter: blur(0px);
 }
 
 /* Homepage: scroll snap only while journey is mounted (see HomeJourney) */
@@ -97,6 +104,157 @@ html.km-home-snap {
   }
 }
 
+.km-float {
+  animation: km-float 7s ease-in-out infinite;
+}
+
+.km-float-delayed {
+  animation: km-float 9s ease-in-out infinite;
+  animation-delay: -2.2s;
+}
+
+@keyframes km-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.km-blob {
+  animation:
+    km-blob-morph 12s ease-in-out infinite,
+    km-blob-drift 18s ease-in-out infinite;
+  will-change: transform, border-radius;
+}
+
+.km-blob--slow {
+  animation-duration: 18s, 26s;
+  animation-delay: -4s, -7s;
+}
+
+@keyframes km-blob-morph {
+  0%,
+  100% {
+    border-radius: 44% 56% 55% 45% / 45% 40% 60% 55%;
+  }
+  33% {
+    border-radius: 58% 42% 43% 57% / 40% 60% 40% 60%;
+  }
+  66% {
+    border-radius: 42% 58% 60% 40% / 55% 45% 55% 45%;
+  }
+}
+
+@keyframes km-blob-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(10px, -14px, 0) scale(1.06);
+  }
+}
+
+.km-splash-spin {
+  animation: km-splash-spin 900ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes km-splash-spin {
+  0% {
+    transform: rotate(0deg) scale(1);
+    filter: saturate(1);
+  }
+  60% {
+    transform: rotate(290deg) scale(1.04);
+    filter: saturate(1.08);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+    filter: saturate(1);
+  }
+}
+
+.km-pop-in {
+  animation: km-pop-in 520ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes km-pop-in {
+  from {
+    transform: translateY(8px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.km-cta-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.km-cta-shine::after {
+  content: "";
+  position: absolute;
+  inset: -60% -60%;
+  background: linear-gradient(
+    110deg,
+    transparent 44%,
+    rgba(196, 181, 253, 0.08) 48%,
+    rgba(196, 181, 253, 0.18) 50%,
+    rgba(196, 181, 253, 0.08) 52%,
+    transparent 56%
+  );
+  transform: translateX(-35%);
+  opacity: 0;
+  transition:
+    transform 700ms ease,
+    opacity 700ms ease;
+  pointer-events: none;
+}
+
+.km-cta-shine:hover::after {
+  transform: translateX(35%);
+  opacity: 1;
+}
+
+.km-hover-lift {
+  transition:
+    transform 260ms cubic-bezier(0.2, 0.9, 0.2, 1),
+    box-shadow 260ms cubic-bezier(0.2, 0.9, 0.2, 1),
+    filter 260ms ease,
+    border-color 260ms ease,
+    background-color 260ms ease;
+  will-change: transform;
+}
+
+.km-hover-lift:hover {
+  transform: translateY(-2px);
+}
+
+.km-hover-lift:active {
+  transform: translateY(0);
+}
+
+.km-fade-up {
+  animation: km-fade-up 700ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
+}
+
+@keyframes km-fade-up {
+  from {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 .km-glass-shine {
   position: relative;
   overflow: hidden;
@@ -128,11 +286,116 @@ html.km-home-snap {
   }
 }
 
+/* Homepage journey: tiny guide mascot patrols inside its box */
+.km-guide-bot-wander {
+  animation: km-guide-bot-wander 10s ease-in-out infinite;
+}
+
+@keyframes km-guide-bot-wander {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translate(0, 0);
+  }
+  25% {
+    transform: translate(-50%, -50%) translate(11px, -13px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translate(-9px, -10px);
+  }
+  75% {
+    transform: translate(-50%, -50%) translate(-12px, 9px);
+  }
+}
+
+/* Ranking page: skyline bars grow in with stagger; top 3 get a soft glow loop */
+@keyframes km-rank-bar-rise {
+  from {
+    transform: scaleY(0.04);
+    opacity: 0.35;
+  }
+  to {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+}
+
+@keyframes km-rank-elite-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 14px rgba(124, 58, 237, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    filter: brightness(1) saturate(1);
+  }
+  50% {
+    box-shadow:
+      0 0 26px rgba(196, 181, 253, 0.5),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    filter: brightness(1.12) saturate(1.08);
+  }
+}
+
+@keyframes km-rank-podium-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes km-rank-label-pop {
+  from {
+    transform: translateY(4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.km-rank-bar-rise {
+  transform-origin: bottom center;
+  animation: km-rank-bar-rise 0.72s cubic-bezier(0.34, 1.25, 0.64, 1) both;
+  animation-delay: var(--km-rank-stagger, 0ms);
+}
+
+.km-rank-bar-elite {
+  animation: km-rank-elite-pulse 2.6s ease-in-out infinite;
+  animation-delay: calc(var(--km-rank-stagger, 0ms) + 0.75s);
+}
+
+.km-rank-podium-float {
+  animation: km-rank-podium-float 5s ease-in-out infinite;
+}
+
+.km-rank-podium-float--delay-2 {
+  animation-delay: -1.6s;
+}
+
+.km-rank-podium-float--delay-1 {
+  animation-delay: -3.2s;
+}
+
+.km-rank-podium-float--delay-3 {
+  animation-delay: 0s;
+}
+
+.km-rank-label-reveal {
+  animation: km-rank-label-pop 0.45s ease-out both;
+  animation-delay: calc(var(--km-rank-stagger, 0ms) + 0.55s);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .km-chain-grid,
   .km-journey-grid,
   .km-breathe,
   .km-breathe-delayed,
+  .km-float,
+  .km-float-delayed,
+  .km-blob,
   .km-hex-drift,
   .km-glass-shine::after {
     animation: none !important;
@@ -144,6 +407,40 @@ html.km-home-snap {
 
   .km-step-panel .transition-all {
     transition: none !important;
+  }
+
+  .km-guide-bot-wander {
+    animation: none !important;
+    transform: translate(-50%, -50%) !important;
+  }
+
+  .km-rank-bar-rise,
+  .km-rank-bar-elite,
+  .km-rank-podium-float,
+  .km-rank-label-reveal {
+    animation: none !important;
+  }
+
+  .km-rank-bar-rise {
+    transform: scaleY(1) !important;
+    opacity: 1 !important;
+  }
+
+  .km-rank-label-reveal {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .km-pop-in {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .km-fade-up {
+    animation: none !important;
+    transform: none !important;
+    opacity: 1 !important;
   }
 }
 

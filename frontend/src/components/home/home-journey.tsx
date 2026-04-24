@@ -1,5 +1,6 @@
 "use client";
 
+import { JourneyGuideBot } from "@/components/home/journey-guide-bot";
 import Link from "next/link";
 import {
   useCallback,
@@ -592,6 +593,8 @@ function StepPanel({
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // Fallback: if IntersectionObserver is unavailable, do not hide content.
+ 
     const el = rootRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
@@ -765,6 +768,7 @@ export function HomeJourney() {
         <StepPanel key={step.id} step={step} index={i} setRef={setSectionRef(i)} />
       ))}
       <JourneyControls activeIndex={activeIndex} total={steps.length} onNext={goNext} />
+      <JourneyGuideBot activeIndex={activeIndex} />
     </main>
   );
 }

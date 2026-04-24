@@ -1,7 +1,5 @@
 import { apiBaseUrl } from "@/lib/api-base";
 
-export const ACCESS_TOKEN_STORAGE_KEY = "km_access_token";
-
 export type NonceResponse = {
   nonce: string;
   expires_at: string;
@@ -43,6 +41,7 @@ export async function postAuthNonce(walletAddress: string): Promise<NonceRespons
 export async function postAuthVerify(message: string, signature: string): Promise<VerifyResponse> {
   const res = await fetch(`${apiBaseUrl()}/v1/auth/verify`, {
     method: "POST",
+    credentials: "include",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message, signature }),
   });
@@ -53,9 +52,9 @@ export async function postAuthVerify(message: string, signature: string): Promis
   return res.json() as Promise<VerifyResponse>;
 }
 
-export async function getMe(accessToken: string, signal?: AbortSignal): Promise<MeResponse> {
+export async function getMe(signal?: AbortSignal): Promise<MeResponse> {
   const res = await fetch(`${apiBaseUrl()}/v1/me`, {
-    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "include",
     signal,
   });
   if (!res.ok) {
@@ -64,10 +63,10 @@ export async function getMe(accessToken: string, signal?: AbortSignal): Promise<
   return res.json() as Promise<MeResponse>;
 }
 
-export async function postLogout(accessToken: string): Promise<void> {
+export async function postLogout(): Promise<void> {
   const res = await fetch(`${apiBaseUrl()}/v1/auth/logout`, {
     method: "POST",
-    headers: { Authorization: `Bearer ${accessToken}` },
+    credentials: "include",
   });
   if (!res.ok && res.status !== 204) {
     throw new Error(`logout failed: ${res.status}`);

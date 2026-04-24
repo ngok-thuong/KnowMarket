@@ -4,7 +4,6 @@ import { createSIWEConfig, type SIWECreateMessageArgs, type SIWEMessageArgs } fr
 import { SiweMessage } from "siwe";
 
 import {
-  ACCESS_TOKEN_STORAGE_KEY,
   getMe,
   postAuthNonce,
   postAuthVerify,
@@ -59,13 +58,12 @@ function writeSession(s: { address: string; chainId: number }) {
   sessionStorage.setItem(SIWE_SESSION_KEY, JSON.stringify(s));
 }
 
-// Clears only the persisted auth credentials (localStorage JWT +
-// sessionStorage session cache). Does NOT touch lastNonce — that state
+// Clears only the persisted auth credentials (sessionStorage session cache).
+// Does NOT touch lastNonce — that state
 // belongs to the sign-in flow and clearing it here would race with the
 // getNonce → createMessage → verifyMessage sequence.
 function clearClientAuth() {
   sessionStorage.removeItem(SIWE_SESSION_KEY);
-  localStorage.removeItem(ACCESS_TOKEN_STORAGE_KEY);
 }
 
 export const reownSiweConfig = createSIWEConfig({
@@ -108,7 +106,6 @@ export const reownSiweConfig = createSIWEConfig({
       const res = await postAuthVerify(message, signature);
       const chainId =
         lastNonce?.siwe.chainId ?? Number(process.env.NEXT_PUBLIC_SIWE_CHAIN_ID || 8453);
-      localStorage.setItem(ACCESS_TOKEN_STORAGE_KEY, res.access_token);
       writeSession({ address: res.user.wallet_address, chainId });
       lastNonce = null;
       return true;
@@ -119,8 +116,6 @@ export const reownSiweConfig = createSIWEConfig({
   },
 
   getSession: async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    if (!token) return null;
     try {
       const cached = readSession();
       if (cached) return cached;
@@ -130,7 +125,7 @@ export const reownSiweConfig = createSIWEConfig({
       const controller = new AbortController();
       const timer = setTimeout(() => controller.abort(), 5_000);
       try {
-        const me = await getMe(token, controller.signal);
+        const me = await getMe(controller.signal);
         const chainId = Number(process.env.NEXT_PUBLIC_SIWE_CHAIN_ID || 8453);
         const s = { address: me.wallet_address, chainId };
         writeSession(s);
@@ -139,7 +134,7 @@ export const reownSiweConfig = createSIWEConfig({
         clearTimeout(timer);
       }
     } catch {
-      // Token is expired/invalid or backend unreachable — clear credentials so
+      // Cookie is expired/invalid or backend unreachable — clear credentials so
       // the user is prompted to sign in again. lastNonce is intentionally left
       // untouched (see note at top of file).
       clearClientAuth();
@@ -148,13 +143,10 @@ export const reownSiweConfig = createSIWEConfig({
   },
 
   signOut: async () => {
-    const token = localStorage.getItem(ACCESS_TOKEN_STORAGE_KEY);
-    if (token) {
-      try {
-        await postLogout(token);
-      } catch {
-        /* still clear client */
-      }
+    try {
+      await postLogout();
+    } catch {
+      /* still clear client */
     }
     clearClientAuth();
     lastNonce = null; // explicit sign-out: also discard any pending sign-in nonce
